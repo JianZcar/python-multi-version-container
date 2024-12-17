@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+python_version="3.10"
+
+podman run \
+  --network container-network \
+  --privileged \
+  -v "$(pwd):/workspace:z" \
+  -v "$XDG_RUNTIME_DIR/wayland-0:/tmp/wayland-0" \
+  -v "$XDG_RUNTIME_DIR:/run/user/$(id -u)" \
+  -e WAYLAND_DISPLAY=wayland-0 \
+  -e XDG_RUNTIME_DIR=/run/user/$(id -u) \
+  -v /usr/share/fonts:/usr/share/fonts:ro \
+  -v /etc/fonts:/etc/fonts:ro \
+  -v /dev/shm:/dev/shm \
+  -v /tmp:/tmp \
+  -v "$HOME/.config/nvim:/root/.config/nvim:z" \
+  --device /dev/dri \
+  --security-opt label=type:container_runtime_t \
+  --rm \
+  -ti python-multi-version bash -c "
+    pyenv global $python_version && \
+    pip install --upgrade pip > /dev/null 2>&1 && \
+    pip install 'python-lsp-server[all]' > /dev/null 2>&1 & \
+    bash
+  "
