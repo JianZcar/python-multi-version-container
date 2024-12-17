@@ -2,6 +2,7 @@
 python_version="3.10"
 
 podman run \
+  --name "$(basename "$(pwd)")" \
   --network container-network \
   --privileged \
   -v "$(pwd):/workspace:z" \

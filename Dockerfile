@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     liblzma-dev \
     git \
+    ripgrep \
     wl-clipboard \
     wayland-protocols \
     libwayland-client0 \
