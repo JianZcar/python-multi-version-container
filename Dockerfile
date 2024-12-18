@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
     libwayland-client0 \
     libwayland-cursor0 \
     libwayland-egl1 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* && rm -rf /var/lib/apt/lists/*
 
 # Install pyenv
 ENV PYENV_ROOT="/root/.pyenv" \
@@ -44,7 +44,8 @@ RUN pyenv install 3.9 \
     && pyenv install 3.11 \
     && pyenv install 3.12 \
     && pyenv install 3.13 \
-    && pyenv global 3.9 3.10 3.11 3.12 3.13
+    && pyenv global 3.9 3.10 3.11 3.12 3.13 \
+    && pyenv rehash
 
 # Verify installation
 RUN pyenv versions
@@ -57,12 +58,12 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
     && echo 'export PATH="/opt/nvim-linux64/bin:$PATH"' >> /root/.bashrc \
     && rm nvim-linux64.tar.gz
 
+ENV TERM="xterm-256color" \
+    COLORTERM="truecolor"
+    
 # Enable true color support
 RUN echo "export PS1='\[\033[38;5;39m\]\u@\h \[\033[38;5;208m\]\w\[\033[0m\] $ '" >> /root/.bashrc \
-    && echo "alias ls='ls --color=auto'" >> /root/.bashrc \
-    && echo "export TERM=xterm-256color" >> /root/.bashrc \
-    && echo "export COLORTERM=truecolor" >> /root/.bashrc
-
+    && echo "alias ls='ls --color=auto'" >> /root/.bashrc 
 
 # Set the default command
 CMD ["bash", "-i"]
