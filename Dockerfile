@@ -1,38 +1,30 @@
-FROM ubuntu:latest
+FROM fedora:latest
 
 LABEL maintainer="esteban.jianzcar@outlook.com"
 
 WORKDIR /workspace
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    libssl-dev \
-    zlib1g-dev \
-    libbz2-dev \
-    libreadline-dev \
-    libsqlite3-dev \
-    wget \
+RUN dnf update -y && dnf install -y \
+    @development-tools \
+    openssl-devel \
+    zlib-devel \
+    bzip2-devel \
+    readline-devel \
+    sqlite-devel \
     llvm \
-    libncurses5-dev \
-    libncursesw5-dev \
-    xz-utils \
-    tk-dev \
-    libffi-dev \
-    liblzma-dev \
-    git \
-    ripgrep \
+    ncurses-devel \
+    xz \
+    tk-devel \
+    libffi-devel \
+    lzma-sdk \
     wl-clipboard \
-    wayland-protocols \
-    libwayland-client0 \
-    libwayland-cursor0 \
-    libwayland-egl1 \
-    && rm -rf /var/lib/apt/lists/* && rm -rf /var/lib/apt/lists/*
+    wayland-devel \
+    && dnf clean all
 
 # Install pyenv
 ENV PYENV_ROOT="/root/.pyenv" \
     PATH="/root/.pyenv/bin:/root/.pyenv/shims:/root/.pyenv/versions:$PATH"
-  
+
 RUN git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT \
     && $PYENV_ROOT/plugins/python-build/install.sh \
     && echo 'eval "$(pyenv init --path)"' >> ~/.bashrc \
@@ -50,17 +42,11 @@ RUN pyenv install 3.9 \
 # Verify installation
 RUN pyenv versions
 
-#Install Latest Neovim
-RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz \
-    && rm -rf /opt/nvim \
-    && tar -C /opt -xzf nvim-linux64.tar.gz \
-    && ls /opt \
-    && echo 'export PATH="/opt/nvim-linux64/bin:$PATH"' >> /root/.bashrc \
-    && rm nvim-linux64.tar.gz
+RUN dnf update -y && dnf install -y helix && dnf clean all
 
 ENV TERM="xterm-256color" \
     COLORTERM="truecolor"
-    
+
 # Enable true color support
 RUN echo "export PS1='\[\033[38;5;39m\]\u@\h \[\033[38;5;208m\]\w\[\033[0m\] $ '" >> /root/.bashrc \
     && echo "alias ls='ls --color=auto'" >> /root/.bashrc 
